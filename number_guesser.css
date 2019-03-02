@@ -1,6 +1,6 @@
 body {
   font-family: "Open Sans", sans-serif;
-  color: #E6e7e8;
+  color: #FFF;
 
 }
 
@@ -9,6 +9,19 @@ header {
   padding: 5px;
   text-align: center;
   background-color: #404041;
+}
+
+button {
+  border-radius: 21px;
+  background-color: #D0D2D3;
+  border-width: 0px;
+  color: inherit;
+  font-size: 26px;
+  padding: 7px;
+  width: 194px;
+  margin: 18px;
+  font-weight: 300;
+  letter-spacing: 1px
 }
 
 h1 {
