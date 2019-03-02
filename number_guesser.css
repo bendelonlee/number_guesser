@@ -1,15 +1,24 @@
 body {
   font-family: "Open Sans", sans-serif;
-  color: #ED458B;
+  color: #E6e7e8;
 
+}
+
+
+header {
+  padding: 5px;
+  text-align: center;
+  background-color: #404041;
+}
+
+h1 {
+  font-size: 48px;
 }
 
 .highlight {
   color: #ED458B;
-
 }
 
-
-#header {
-  background-color: #404041;
+.non-highlight {
+  font-weight: 300;
 }
