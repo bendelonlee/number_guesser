@@ -52,6 +52,12 @@ p {
   align-items: center;
 }
 
+
+.active-button {
+  background-color: #929497;
+}
+
+
 #number-input {
   margin: 45px;
   width: 424px;
@@ -76,6 +82,10 @@ p {
   margin-bottom: 75px;
 }
 
-.active-button {
-  background-color: #929497;
+#errors {
+  margin-top: -35px;
+  font-size: 17px;
+  margin-bottom: 18px;
+  color: red;
+  height: 17px;
 }
