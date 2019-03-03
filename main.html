@@ -1,36 +1,43 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300i,400,700" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="number_guesser.css">
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="number_guesser.css">
 
-  </head>
-  <body>
-    <header>
-      <h1> <span class="highlight">Number</span> <span class="non-highlight">Guesser</span></h1>
-    </header>
+</head>
+<body>
+  <header>
+    <h1> <span class="highlight">Number</span> <span class="non-highlight">Guesser</span></h1>
+  </header>
 
-    <div class='centering-flex'>
-      <input type="text" id="number-input" placeholder="Enter your guess">
+  <div class='centering-flex'>
+    <input type="number" id="number-input" placeholder="Enter a guess between 20 and 30">
+    <div>
+      <button id="guess-button">Guess</button>
+      <button id="clear-button">Clear</button>
     </div>
-    <div class='centering-flex'>
-      <button>Guess</button>
-      <button>Clear</button>
-    </div>
-    <div class='centering-flex'>
-      <p>Your last guess was</p>
-    </div>
-    <div class='centering-flex'>
-      <p>Your last guess was</p>
-    </div>
-
-
-    <div id="feedback">
-
+    <div id="last-guess-container" class='centering-flex'>
+      <div>
+        <p>Your last guess was</p>
+      </div>
+      <div>
+        <p id="last-guess"></p>
+      </div>
+      <div>
+        <p id="feedback"> &nbsp;</p>
+      </div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="number_guesser.js"></script>
-  </body>
+
+
+    <button id="reset-button">
+      Reset
+    </button>
+  </div>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="number_guesser.js"></script>
+</body>
 
 </html>

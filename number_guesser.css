@@ -1,7 +1,7 @@
 body {
   font-family: "Open Sans", sans-serif;
-  color: #FFF;
-
+  color: #404041;
+  font-weight: 300;
 }
 
 
@@ -14,22 +14,27 @@ header {
 button {
   border-radius: 21px;
   background-color: #D0D2D3;
+
   border-width: 0px;
-  color: inherit;
+  color: #fff;
   font-size: 24px;
   padding: 7px;
-  width: 194px;
-  margin: 0px 18px 0px 18px;
+  width: 201px;
+  margin: 0px 11px 0px 11px;
   font-weight: 300;
   letter-spacing: 1px
 }
-button:hover {
+.active-button:hover:active {
   background-color: #EB008b;
-
 }
+button:focus {outline:0;}
 
 h1 {
   font-size: 48px;
+}
+
+p {
+  font-size: 20px;
 }
 
 .highlight {
@@ -38,16 +43,39 @@ h1 {
 
 .non-highlight {
   font-weight: 300;
+  color: #e6e7e8;
 }
 
 .centering-flex {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 #number-input {
   margin: 45px;
-  width: 400px;
+  width: 424px;
   font-size: 24px;
   font-family: "Open Sans", sans-serif;
+}
+
+#last-guess-container {
+  margin: 40px 0px 40px 0px;
+}
+
+#last-guess {
+  color: #EB008b;
+  font-size: 178px;
+  margin: -50px;
+  font-weight: 300;
+  height: 240px;
+}
+
+#reset-button {
+  width: 424px;
+  margin-bottom: 75px;
+}
+
+.active-button {
+  background-color: #929497;
 }
