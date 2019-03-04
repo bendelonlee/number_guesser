@@ -65,7 +65,7 @@ function checkGuess(guessInt, answer, numGuesses) {
     $('#feedback').html('That guess is too high!')
   } else if (guessInt < answer) {
     $('#feedback').html('That guess is too low!')
-  } else {
+  } else if (guessInt == answer){
     $('#feedback').html(`BOOM! You got the answer in ${numGuesses} guesses!`)
     $('#reset-button').addClass('enabled-button')
   }
