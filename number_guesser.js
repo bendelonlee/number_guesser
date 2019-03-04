@@ -2,7 +2,7 @@
 // when the page is loaded to avoid bugs
 $( document ).ready(function() {
   // sets up variables. Using let because there's no  reason to use a more
-  //global variable than is required.
+  // global variable than is required. ES6
   let numGuesses = 0; //the number of guesses a user has taken.
   let min = 40; //the min and max of the range of possible answer
   let max = 50;
