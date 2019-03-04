@@ -24,7 +24,7 @@ button {
   font-weight: 300;
   letter-spacing: 1px
 }
-.active-button:hover:active {
+.enabled-button:hover:active {
   background-color: #EB008b;
 }
 button:focus {outline:0;}
@@ -53,7 +53,7 @@ p {
 }
 
 
-.active-button {
+.enabled-button {
   background-color: #929497;
 }
 

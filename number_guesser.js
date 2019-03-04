@@ -1,44 +1,43 @@
-
 $( document ).ready(function() {
   let numGuesses = 0;
   let min = 40;
   let max = 50;
   let answer = setUpAnswer(min, max);
+
   $('#guess-button').click(function() {
     let guessInt = parseInt($('#number-input').val());
     if (checkIntForErrors(guessInt, min, max)) { return true; }
     numGuesses += 1;
     checkGuess(guessInt, answer, numGuesses)
   });
+
   $('#clear-button').click( function() {
     $('#number-input').val('');
   });
+
   $('#number-input').keyup( function(key) {
-
     if($(this).val()) {
-      $('#guess-button').addClass('active-button');
-      $('#clear-button').addClass('active-button');
+      $('#guess-button').addClass('enabled-button');
+      $('#clear-button').addClass('enabled-button');
     } else {
-      $('#guess-button').removeClass('active-button');
-      $('#clear-button').removeClass('active-button');
+      $('#guess-button').removeClass('enabled-button');
+      $('#clear-button').removeClass('enabled-button');
     }
-
     if(key.which == 13) {
       $('#guess-button').click();
     }
   });
+
   $('#reset-button').click( function() {
     $('#number-input').val('');
     $('#feedback').val('');
-    $('button').removeClass('active-button');
+    $('button').removeClass('enabled-button');
     numGuesses = 0
     min -= 10;
     max += 10;
     answer = setUpAnswer(min, max)
-  })
+  });
 });
-
-
 
 function setUpAnswer(min, max) {
   $('#number-input').attr('placeholder', `Enter a guess from ${min} to ${max}`)
@@ -68,6 +67,6 @@ function checkGuess(guessInt, answer, numGuesses) {
     $('#feedback').html('That guess is too low!')
   } else {
     $('#feedback').html(`BOOM! You got the answer in ${numGuesses} guesses!`)
-    $('#reset-button').addClass('active-button')
+    $('#reset-button').addClass('enabled-button')
   }
 }
