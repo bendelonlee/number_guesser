@@ -7,7 +7,6 @@ $( document ).ready(function() {
 
 
   $('.set-button').click(function() {
-    debugger;
     min = parseInt($('#min-input').val());
     max = parseInt($('#max-input').val());
     if (Number.isNaN(min) && Number.isNaN(max)) {
@@ -48,10 +47,10 @@ $( document ).ready(function() {
     $('#feedback').val('');
     $('#last-guess').html('&nbsp;')
     $('button').removeClass('enabled-button');
-    numGuesses = 0
+    numGuesses = 0;
     min = min - 10;
     max += 10;
-    answer = setUpAnswer()
+    setUpAnswer();
   });
 
   function listenForGuess() {
@@ -59,7 +58,7 @@ $( document ).ready(function() {
       let guessInt = parseInt($('#guess-input').val());
       if (checkIntForErrors(guessInt)) { return true; }
       numGuesses += 1;
-      checkGuess(guessInt, answer, numGuesses)
+      checkGuess(guessInt);
     });
   }
 
@@ -67,10 +66,10 @@ $( document ).ready(function() {
     $('#min-input').hide();
     $('#max-input').hide();
     $('#guess-input').show();
-    $('#enter-button').html('Guess')
+    $('#enter-button').html('Guess');
     $('.set-button').unbind('click');
-    $('#enter-button').removeClass('set-button')
-    $('#enter-button').addClass('guess-button')
+    $('#enter-button').removeClass('set-button');
+    $('#enter-button').addClass('guess-button');
     setUpAnswer();
     listenForGuess();
   }
@@ -80,6 +79,7 @@ $( document ).ready(function() {
     $('#guess-input').attr('min', min)
     $('#guess-input').attr('max', max)
     $('#top-feedback').html('&nbsp')
+    $('#feedback').html('&nbsp')
     answer = Math.floor((Math.random() * (max - min)) + min);
   }
 
@@ -96,7 +96,7 @@ $( document ).ready(function() {
     }
   }
 
-  function checkGuess(guessInt, answer, numGuesses) {
+  function checkGuess(guessInt) {
     $('#top-feedback').html('Your last guess was');
     $('#last-guess').html(guessInt);
     if (guessInt > answer) {
