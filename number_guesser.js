@@ -1,10 +1,24 @@
 $( document ).ready(function() {
   let numGuesses = 0;
-  let min = 40;
-  let max = 50;
-  let answer = setUpAnswer(min, max);
 
-  $('#guess-button').click(function() {
+  var min = 0;
+  var max = 0;
+
+  $('.set-button').click(function() {
+    let min = parseInt($('#min-input').val());
+    let max = parseInt($('#max-input').val());
+    if (Number.isNaN(min) && Number.isNaN(max)) {
+      $('#errors').html(`Invalid min and max. `)
+    } else if (Number.isNaN(max)) {
+      $('#errors').html(`Invalid maximum. `)
+    } else if (Number.isNaN(min)) {
+      $('#errors').html(`Invalid minimum. `)
+    } else {
+      setUpRound(min, max);
+    }
+  });
+
+  $('.guess-button').click(function() {
     let guessInt = parseInt($('#number-input').val());
     if (checkIntForErrors(guessInt, min, max)) { return true; }
     numGuesses += 1;
@@ -12,19 +26,19 @@ $( document ).ready(function() {
   });
 
   $('#clear-button').click( function() {
-    $('#number-input').val('');
+    $('.number-input').val('');
   });
 
-  $('#number-input').keyup( function(key) {
+  $('.number-input').keyup( function(key) {
     if($(this).val()) {
-      $('#guess-button').addClass('enabled-button');
+      $('#enter-button').addClass('enabled-button');
       $('#clear-button').addClass('enabled-button');
     } else {
-      $('#guess-button').removeClass('enabled-button');
+      $('#enter-button').removeClass('enabled-button');
       $('#clear-button').removeClass('enabled-button');
     }
     if(key.which == 13) {
-      $('#guess-button').click();
+      $('#enter-button').click();
     }
   });
 
