@@ -3,7 +3,8 @@ var min;
 var max;
 
 $( document ).ready(function() {
-  let numGuesses = 0;
+  var numGuesses = 0;
+  listenForKeyUps();
 
 
   $('.set-button').click(function() {
@@ -19,6 +20,7 @@ $( document ).ready(function() {
       $(`#errors`).html(`Min must be less than max.`)
     } else {
       $(`#errors`).html('');
+      debugger;
       setUpRound();
     }
   });
@@ -29,20 +31,23 @@ $( document ).ready(function() {
     $('.set-button').removeClass('enabled-button');
   });
 
-  $('.number-input').keyup( function(key) {
-    if($('.number-input').val()) {
-      $('#enter-button').addClass('enabled-button');
-      $('#clear-button').addClass('enabled-button');
-    } else {
-      $('#enter-button').removeClass('enabled-button');
-      $('#clear-button').removeClass('enabled-button');
-    }
-    if(key.which == 13) {
-      $('#enter-button').click();
-    }
-  });
+  function listenForKeyUps() {
+    $('.number-input').keyup( function(key) {
+      if($('.number-input').val()) {
+        $('#enter-button').addClass('enabled-button');
+        $('#clear-button').addClass('enabled-button');
+      } else {
+        $('#enter-button').removeClass('enabled-button');
+        $('#clear-button').removeClass('enabled-button');
+      }
+      if(key.which == 13) {
+        $('#enter-button').click();
+      }
+    });
+  }
 
   $('#reset-button').click( function() {
+    if (!$(this).hasClass('enabled-button')) { return true; }
     $('#guess-input').val('');
     $('#feedback').val('');
     $('#last-guess').html('&nbsp;')
@@ -63,8 +68,8 @@ $( document ).ready(function() {
   }
 
   function setUpRound() {
-    $('#min-input').hide();
-    $('#max-input').hide();
+    $('#min-input').detach();
+    $('#max-input').detach();
     $('#guess-input').show();
     $('#enter-button').html('Guess');
     $('.set-button').unbind('click');
