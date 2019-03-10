@@ -57,12 +57,21 @@ p {
   background-color: #929497;
 }
 
-
-#number-input {
+.number-input {
   margin: 45px;
   width: 424px;
   font-size: 24px;
   font-family: "Open Sans", sans-serif;
+}
+
+.short {
+  width: 188px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+#guess-input {
+  display: none;
 }
 
 #last-guess-container {

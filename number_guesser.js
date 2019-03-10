@@ -1,104 +1,179 @@
+
 // Wraps all my event listeners in this anonymous callback that will run only
 // when the page is loaded to avoid bugs
 $( document ).ready(function() {
-  // sets up variables. Using let because there's no  reason to use a more
-  // global variable than is required. ES6
-  let numGuesses = 0; //the number of guesses a user has taken.
-  let min = 40; //the min and max of the range of possible answer
-  let max = 50;
-  let answer = setUpAnswer(min, max);
-  //calls setUp answer (defined below) which selects and returns a random answer
-  //and manipulates the dom using the min and max
+  // At first I had these as local variables with let and was passing them from
+  // function to function. Eventually, it was simpler to change them to the more
+  // global var.
+  var answer; // the answer that will be randomly generated
+  var min; // the minimum of the range that the user will provide...
+  var max; // ... as well as the maximum.
+  var numGuesses = 0; // the number of guesses the user has taken this roung
+  var roundEnded = false; // A boolean used so you can't keep pressing guess...
+  //... after you get the right answer.
 
-  $('#guess-button').click(function() {
-    //listener for a click on the 'guess button' with an anonymous callback
-    let guessInt = parseInt($('#number-input').val());
-    // takes the text that's in the input field and parses it into an integer
-    if (checkIntForErrors(guessInt, min, max)) { return true; }
-    // calls a method defined below. If the method returns true, then there are
-    //errors in the input. Therefore this line will also return true, exiting
-    // the main function.
-    numGuesses += 1; //increments the count of the user's guesses
-    checkGuess(guessInt, answer, numGuesses)
-    // I suppose I could experiment with using var instead of having to pass in
-    // these variables, but this works.
+  $('.number-input').keyup( function(key) {
+    //listener for 'key up' on number-input field during set up. I tried to
+    //listen for other
+    //events, but ran into issues. Change, for example, was a little too delayed.
+    //Key down listend too early. Key up seemed right.
+    if($('#min-input').val() || $('#max-input').val()) {
+      // if either the min or max fields have values
+      $('#clear-button').addClass('enabled-button');
+      // then the clear button is enabled
+    } else {
+      //otherwise it's diabled.
+      $('#clear-button').removeClass('enabled-button');
+    }
+    if($('#min-input').val() && $('#max-input').val()) {
+      //if both the min and max input have values
+      $('.set-button').addClass('enabled-button');
+      //then the set button becomes enabled.
+    } else {
+      // otherwise it's disabled.
+      $('.set-button').removeClass('enabled-button');
+    }
+    if(key.which == 13) {
+      // if the enter key is pressed keyuped, it's like clicking the enter button
+      $('#enter-button').click();
+    }
+  });
+
+
+
+  $('.set-button').click(function() {
+    //when the set button is clicked
+    min = parseInt($('#min-input').val());
+    // the min variable gets set by user input
+    max = parseInt($('#max-input').val()); // as does the max variable.
+    if (Number.isNaN(min) && Number.isNaN(max)) {
+      // if the max and min are not numbers
+      $('#errors').html(`Invalid min and max. `) // an error is shown
+    } else if (Number.isNaN(max)) { // or if just the max isn't valid
+      $('#errors').html(`Invalid maximum. `) // an error is shown
+    } else if (Number.isNaN(min)) { // or if just the min isn't valid
+      $('#errors').html(`Invalid minimum. `) // an error is shown
+    } else if (min >= max) { // or if min isn't less than the max
+      $(`#errors`).html(`Min must be less than max.`) // an error is shown
+    } else { // otherwise
+      $(`#errors`).html(''); //any displayed errors are cleared
+      setUpRound(); // and the first guessing round is set upr
+    }
   });
 
   $('#clear-button').click( function() {
-    //listener for a click on the button with id clear-button
-    $('#number-input').val(''); //removes all text from the input field
+    $('.number-input').val('');
+    $(this).removeClass('enabled-button');
+    $('#enter-button').removeClass('enabled-button');
   });
 
-  $('#number-input').keyup( function(key) {
-    //listener for 'key up' on number-input field. I tried to listen for other
-    //events, but ran into issues. Change, for example, was a little too delayed.
-    //Key down listend too early. Key up seemed right.
-    if($(this).val()) {
-      // checks to see that the input field has something in it, and if it does...
-      $('#guess-button').addClass('enabled-button'); // enables the guess button
-      $('#clear-button').addClass('enabled-button'); // enables the clear button
-    } else { // and if it isn't
-      $('#guess-button').removeClass('enabled-button'); // disables those buttons
-      $('#clear-button').removeClass('enabled-button');
-    }
-    if(key.which == 13) { // if the key pressed is 'enter'
-      $('#guess-button').click(); // clicks on the guess button for you
-    }
-  });
+  function listenForKeyUpsRegular() {
+    $('.number-input').keyup( function(key) {
+      if($('.number-input').val()) {
+        $('#enter-button').addClass('enabled-button');
+        $('#clear-button').addClass('enabled-button');
+      } else {
+        $('#enter-button').removeClass('enabled-button');
+        $('#clear-button').removeClass('enabled-button');
+      }
+      if(key.which == 13) {
+        $('#enter-button').click();
+      }
+    });
+  }
 
   $('#reset-button').click( function() {
     //adds a click listener on the reset button.
-    $('#number-input').val(''); // removes text from the input field
+
+    if (!$(this).hasClass('enabled-button')) { return true; }
+    $('#guess-input').val('');  // removes text from the input field
     $('#feedback').val(''); // and the feedback area (ie 'BOOM!')
-    $('button').removeClass('enabled-button'); //disables all buttons
-    numGuesses = 0 //resets the guess counter to 0
-    min -= 10; // increases the size of the range
-    max += 10; // in both directions
-    answer = setUpAnswer(min, max)
-    // calls function defined below, the same function that was called on line 7
+    $('#last-guess').html('&nbsp;') // and the last guess. Uses non-breaking
+    //space so it doesn't collapse.
+    $('button').removeClass('enabled-button');  //disables all buttons
+    numGuesses = 0; //resets the guess counter to 0
+    min = min - 10;// increases the size of the range
+    max += 10;// in both directions
+    setUpAnswer(); // calls the setUpAnswer function
+    roundEnded = false; // sets roundEnded to false
   });
-});
 
-function setUpAnswer(min, max) {
-  // defines function that takes a range and sets up an answer
-  $('#number-input').attr('placeholder', `Enter a guess from ${min} to ${max}`)
-  //writes the min and max into the placeholder text
-  $('#number-input').attr('min', min)
-  //alters the number input field to have the right mind
-  $('#number-input').attr('max', max) // and max
-  return Math.floor((Math.random() * (max - min)) + min);
-  //returns a random number inside the range to be stored by the parent function.
-}
+  function listenForGuess() {
+    $('.guess-button').click(function() {
+      if($(this).hasClass('enabled-button') && roundEnded == false) {
+        let guessInt = parseInt($('#guess-input').val());
+        if (checkIntForErrors(guessInt)) { return true; }
+        numGuesses += 1;
+        checkGuess(guessInt);
+      }
+    });
+  }
 
-function checkIntForErrors(guessInt, min, max) {
-  //defines a function that takes a parsed guess and checks it for erros
-  if (Number.isNaN(guessInt)) { // If the number is Not a Number....
-    $('#errors').html(`Invalid input. Please enter a number between ${min} and ${max}`)
+  function setUpRound() {
+    $('#min-input').detach();
+    $('#max-input').detach();
+    $('#guess-input').show();
+    $('#enter-button').html('Guess');
+    $('.set-button').unbind('click');
+    $('.number-input').unbind('keyup');
+    $('#enter-button').removeClass('set-button');
+    $('#enter-button').addClass('guess-button');
+    setUpAnswer();
+    listenForKeyUpsRegular();
+    listenForGuess();
+  }
+
+  function setUpAnswer() {
+    // defines function that takes a range and sets up an answer
+    $('#guess-input').attr('placeholder', `Enter a guess from ${min} to ${max}`)
+    //writes the min and max into the placeholder text
+    $('#guess-input').attr('min', min)
+    //alters the number input field to have the right mind
+    $('#guess-input').attr('max', max) // and max
+    $('#top-feedback').html('&nbsp')
+    // clears the feedback areas
+    $('#feedback').html('&nbsp')
+    answer = Math.floor((Math.random() * (max - min)) + min);
+    //returns a random number inside the range to be stored by the parent function.
+
+  }
+
+  function checkIntForErrors(guessInt) {
+    //defines a function that takes a parsed guess and checks it for erros
+    if (Number.isNaN(guessInt)) {
+    // If the number is Not a Number....
+      $('#errors').html(`Invalid input. Please enter a number between ${min} and ${max}`)
     // it writes an error message to the error div on the dom.
-    return true;
+      return true;
     // and returns true so that the calling function can return without continuing.
   } else if (guessInt > max || guessInt < min) {
     // If the number is outside the range...
-    $('#errors').html(`Out of range. The number is between ${min} and ${max}`)
+      $('#errors').html(`Out of range. The number is between ${min} and ${max}`)
     // writes the error message on the dom.
-    return true; // returns true.
-  } else { // if there's nothing wrong with the answer
-    $('#errors').html('') // the errors div on the dom is cleared.
-    return false; // returning false means the parent function will continue on.
+      return true;
+    // returns true.
+  } else {
+    // if there's nothing wrong with the answer
+      $('#errors').html('')
+    // the errors div on the dom is cleared.
+      return false;
+    // returning false means the parent function will continue on.
   }
-}
+  }
 
-function checkGuess(guessInt, answer, numGuesses) {
-  //defines a function that takes a guess, answer, and the guess counter.
-  $('#last-guess').html(guessInt); //writes the guess to the last-guess div
-  if (guessInt > answer) { // If the guessed integer is too high
-    $('#feedback').html('That guess is too high!') //the user gets that feedback
-  } else if (guessInt < answer) { // If the guessed answer is too low
-    $('#feedback').html('That guess is too low!') // the user gets that feedback
-  } else if (guessInt == answer){ // if the answer is correct
-    $('#feedback').html(`BOOM! You got the answer in ${numGuesses} guesses!`)
-    // The user is told it's correct as well as how many guesses they took.
-    $('#reset-button').addClass('enabled-button')
-    // enables the reset button so you can start a new round.
+  function checkGuess(guessInt) {
+    $('#top-feedback').html('Your last guess was');
+    $('#last-guess').html(guessInt);
+    if (guessInt > answer) {
+      $('#feedback').html('That guess is too high!')
+    } else if (guessInt < answer) {
+      $('#feedback').html('That guess is too low!')
+    } else if (guessInt == answer){
+      $('#enter-button').removeClass('enabled-button')
+      $('#feedback').html(`BOOM! You got the answer in ${numGuesses} guesses!`)
+      $('#reset-button').addClass('enabled-button')
+      roundEnded = true;
+    }
   }
-}
+
+});
