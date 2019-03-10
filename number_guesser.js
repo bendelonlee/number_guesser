@@ -57,28 +57,30 @@ $( document ).ready(function() {
       $(`#errors`).html(`Min must be less than max.`) // an error is shown
     } else { // otherwise
       $(`#errors`).html(''); //any displayed errors are cleared
-      setUpRound(); // and the first guessing round is set upr
+      setUpGuessing(); // and the first guessing round is set up
     }
   });
 
   $('#clear-button').click( function() {
-    $('.number-input').val('');
-    $(this).removeClass('enabled-button');
-    $('#enter-button').removeClass('enabled-button');
+    // when the clear button is clicked
+    $('.number-input').val(''); // all number inputs are cleared
+    $(this).removeClass('enabled-button'); // the clear button is no longer enabled
+    $('#enter-button').removeClass('enabled-button'); // the clear button is no longer enabled
   });
 
-  function listenForKeyUpsRegular() {
+  function listenForKeyUpsGuessing() {
+    // when a key up happens in a number input field during the guessing
     $('.number-input').keyup( function(key) {
-      if($('.number-input').val()) {
-        $('#enter-button').addClass('enabled-button');
-        $('#clear-button').addClass('enabled-button');
+      if($('.number-input').val()) { // if there is any value in the number input field
+        $('#enter-button').addClass('enabled-button'); // the enter...
+        $('#clear-button').addClass('enabled-button'); //...and clear buttons are enabled
       } else {
-        $('#enter-button').removeClass('enabled-button');
-        $('#clear-button').removeClass('enabled-button');
+        $('#enter-button').removeClass('enabled-button'); // otherwise they are
+        $('#clear-button').removeClass('enabled-button'); // disabled.
       }
-      if(key.which == 13) {
-        $('#enter-button').click();
-      }
+      if(key.which == 13) { // if the enter key is keyupped,
+        $('#enter-button').click(); // it counts as clicking on the enter button
+      } // (this code is unideally redundant)
     });
   }
 
@@ -99,28 +101,38 @@ $( document ).ready(function() {
   });
 
   function listenForGuess() {
-    $('.guess-button').click(function() {
+    //wraps listen in a function because '.guess-button' doesn't exist when the
+    //document first loads
+    $('.guess-button').click(function() { //when the guess button is clicked
       if($(this).hasClass('enabled-button') && roundEnded == false) {
+    //if it is enabled and the round hasn't ended
         let guessInt = parseInt($('#guess-input').val());
+    // the input inside the guess input field is parsed
         if (checkIntForErrors(guessInt)) { return true; }
+    // and checked for errors. If there are any errors, the function stops running.
         numGuesses += 1;
+    // otherwise the number of guesses is incremented
         checkGuess(guessInt);
+    // and the guess is checked against the randomly selected answer.
       }
     });
   }
 
-  function setUpRound() {
-    $('#min-input').detach();
-    $('#max-input').detach();
-    $('#guess-input').show();
-    $('#enter-button').html('Guess');
-    $('.set-button').unbind('click');
-    $('.number-input').unbind('keyup');
-    $('#enter-button').removeClass('set-button');
-    $('#enter-button').addClass('guess-button');
-    setUpAnswer();
-    listenForKeyUpsRegular();
-    listenForGuess();
+  function setUpGuessing() {
+    // once the set up is over, this function is called.
+    $('#min-input').detach(); // the min-input button is removed
+    $('#max-input').detach(); // as is the max input button
+    $('#guess-input').show(); // the hidden guess input button is revealed.
+    $('#enter-button').html('Guess'); // the enter button is changed from "set" to "guess"
+    $('.set-button').unbind('click'); // its old listener is removed
+
+    $('#enter-button').removeClass('set-button'); // its class is changed
+    $('#enter-button').addClass('guess-button'); // from set-button to guess-button
+    $('.number-input').unbind('keyup'); // the old key ups that relate to the min
+    // and max input fields are removed
+    listenForKeyUpsGuessing(); // A new key up listener is added, replacing the old one
+    listenForGuess(); // a new listener is added for the guess button
+    setUpAnswer(); // selects an answer and displays it.
   }
 
   function setUpAnswer() {
@@ -162,17 +174,21 @@ $( document ).ready(function() {
   }
 
   function checkGuess(guessInt) {
+    // gets called on the parsed, error checked user guess.
     $('#top-feedback').html('Your last guess was');
+    // adds feedback text (usually it will already be there)
     $('#last-guess').html(guessInt);
-    if (guessInt > answer) {
-      $('#feedback').html('That guess is too high!')
-    } else if (guessInt < answer) {
-      $('#feedback').html('That guess is too low!')
-    } else if (guessInt == answer){
-      $('#enter-button').removeClass('enabled-button')
+    // fills in the last guess p tag with the user's last guess
+    if (guessInt > answer) { // if the guess is greater than the answer
+      $('#feedback').html('That guess is too high!') // says so
+    } else if (guessInt < answer) { // if it's lower
+      $('#feedback').html('That guess is too low!') // says so
+    } else if (guessInt == answer){ // if the user correctly guessed the answer
       $('#feedback').html(`BOOM! You got the answer in ${numGuesses} guesses!`)
-      $('#reset-button').addClass('enabled-button')
-      roundEnded = true;
+      // credit is given where credit is due. Includes how many guesses the user took.
+      $('#enter-button').removeClass('enabled-button') // the enter button is disabled.
+      $('#reset-button').addClass('enabled-button') // the reset button is enabled.
+      roundEnded = true; // the round ended variable is set to true so you can't press on guess
     }
   }
 
