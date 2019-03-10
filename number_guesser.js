@@ -1,10 +1,30 @@
-var answer;
-var min;
-var max;
+
 
 $( document ).ready(function() {
+  var answer;
+  var min;
+  var max;
   var numGuesses = 0;
-  listenForKeyUps();
+  var roundEnded = false;
+  listenForKeyUpsSetup();
+
+  function listenForKeyUpsSetup() {
+    $('.number-input').keyup( function(key) {
+      if($('#min-input').val() || $('#max-input').val()) {
+        $('#clear-button').addClass('enabled-button');
+      } else {
+        $('#clear-button').removeClass('enabled-button');
+      }
+      if($('#min-input').val() && $('#max-input').val()) {
+        $('.set-button').addClass('enabled-button');
+      } else {
+        $('.set-button').removeClass('enabled-button');
+      }
+      if(key.which == 13) {
+        $('#enter-button').click();
+      }
+    });
+  }
 
 
   $('.set-button').click(function() {
@@ -28,10 +48,10 @@ $( document ).ready(function() {
   $('#clear-button').click( function() {
     $('.number-input').val('');
     $(this).removeClass('enabled-button');
-    $('.set-button').removeClass('enabled-button');
+    $('#enter-button').removeClass('enabled-button');
   });
 
-  function listenForKeyUps() {
+  function listenForKeyUpsRegular() {
     $('.number-input').keyup( function(key) {
       if($('.number-input').val()) {
         $('#enter-button').addClass('enabled-button');
@@ -56,14 +76,17 @@ $( document ).ready(function() {
     min = min - 10;
     max += 10;
     setUpAnswer();
+    roundEnded = false;
   });
 
   function listenForGuess() {
     $('.guess-button').click(function() {
-      let guessInt = parseInt($('#guess-input').val());
-      if (checkIntForErrors(guessInt)) { return true; }
-      numGuesses += 1;
-      checkGuess(guessInt);
+      if($(this).hasClass('enabled-button') && roundEnded == false) {
+        let guessInt = parseInt($('#guess-input').val());
+        if (checkIntForErrors(guessInt)) { return true; }
+        numGuesses += 1;
+        checkGuess(guessInt);
+      }
     });
   }
 
@@ -73,9 +96,11 @@ $( document ).ready(function() {
     $('#guess-input').show();
     $('#enter-button').html('Guess');
     $('.set-button').unbind('click');
+    $('.number-input').unbind('keyup');
     $('#enter-button').removeClass('set-button');
     $('#enter-button').addClass('guess-button');
     setUpAnswer();
+    listenForKeyUpsRegular();
     listenForGuess();
   }
 
@@ -112,6 +137,7 @@ $( document ).ready(function() {
       $('#enter-button').removeClass('enabled-button')
       $('#feedback').html(`BOOM! You got the answer in ${numGuesses} guesses!`)
       $('#reset-button').addClass('enabled-button')
+      roundEnded = true;
     }
   }
 
